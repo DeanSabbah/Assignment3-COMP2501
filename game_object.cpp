@@ -3,14 +3,16 @@
 #include <iostream>
 
 #include "game_object.h"
+#include "path_config.h"
 
+const std::string resources_directory_g = RESOURCES_DIRECTORY;
 namespace game {
 
-GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture) 
+GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2 scale) 
 {
     // Initialize all attributes
     position_ = position;
-    scale_ = glm::vec2(1.0, 1.0);
+    scale_ = scale;
     angle_ = 0.0;
     geometry_ = geom;
     shader_ = shader;
@@ -18,6 +20,7 @@ GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader
     health = 1;
     prev_collider = nullptr;
 	timer = new Timer();
+    grayscale_shader_.Init((resources_directory_g + std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/sprite_fragment_grayscale.glsl")).c_str());
 }
 
 game::GameObject::~GameObject() {
@@ -58,11 +61,14 @@ void GameObject::Update(double delta_time) {}
 
 void GameObject::Render(glm::mat4 view_matrix, double current_time){
 
+	// Check if the object is a ghost and set the shader accordingly
+    Shader* active_shader = ghost_ ? &grayscale_shader_ : shader_;
+
     // Set up the shader
-    shader_->Enable();
+    active_shader->Enable();
 
     // Set up the view matrix
-    shader_->SetUniformMat4("view_matrix", view_matrix);
+    active_shader->SetUniformMat4("view_matrix", view_matrix);
 
     // Setup the scaling matrix for the shader
     glm::mat4 scaling_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale_.x, scale_.y, 1.0));
@@ -77,16 +83,18 @@ void GameObject::Render(glm::mat4 view_matrix, double current_time){
     glm::mat4 transformation_matrix = translation_matrix * rotation_matrix * scaling_matrix;
 
     // Set the transformation matrix in the shader
-    shader_->SetUniformMat4("transformation_matrix", transformation_matrix);
+    active_shader->SetUniformMat4("transformation_matrix", transformation_matrix);
 
     // Set up the geometry
-    geometry_->SetGeometry(shader_->GetShaderProgram());
+    geometry_->SetGeometry(active_shader->GetShaderProgram());
 
     // Bind the entity's texture
     glBindTexture(GL_TEXTURE_2D, texture_);
 
     // Draw the entity
     glDrawElements(GL_TRIANGLES, geometry_->GetSize(), GL_UNSIGNED_INT, 0);
+
+	active_shader->Disable();
 }
 
 // Removes 1 hp, call death function when hp is 0

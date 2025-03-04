@@ -15,7 +15,6 @@ set(HDRS
     projectile_game_object.h
     shader.h
     geometry.h
-    circle.h
     sprite.h
     timer.h
     collider_object.h
@@ -30,10 +29,10 @@ set(SRCS
     collectible_game_object.cpp
     enemy_game_object.cpp
     projectile_game_object.cpp
-    circle.cpp
     shader.cpp
     sprite.cpp
     timer.cpp
+    collider_object.cpp
     sprite_vertex_shader.glsl
     sprite_fragment_shader.glsl
 )

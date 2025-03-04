@@ -1,8 +1,8 @@
 #include "collectible_game_object.h"
 
 namespace game {
-	CollectibleGameObject::CollectibleGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture)
-		: GameObject(position, geom, shader, texture) {
+	CollectibleGameObject::CollectibleGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float radius)
+		: GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
 		health = 1;
 	}
 

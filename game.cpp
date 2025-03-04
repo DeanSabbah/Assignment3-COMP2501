@@ -12,6 +12,7 @@
 #include "player_game_object.h"
 #include "collectible_game_object.h"
 #include "enemy_game_object.h"
+#include "projectile_game_object.h"
 #include "game.h"
 #include <time.h>
 
@@ -47,7 +48,8 @@ void Game::SetupGameWorld(void)
            tex_orb = 4,
            explosion = 5,
            yellow_orb = 6,
-           invincible = 7};
+           invincible = 7,
+           fireball = 8};
     textures.push_back("/textures/Ship_4.png"); 
     textures.push_back("/textures/Ship_2.png"); 
     textures.push_back("/textures/Ship_5.png");
@@ -56,6 +58,7 @@ void Game::SetupGameWorld(void)
     textures.push_back("/textures/Explosion.png");
     textures.push_back("/textures/orb_yellow.png");
 	textures.push_back("/textures/Player_invincible.png");
+	textures.push_back("/textures/FireBall.png");
     // Load textures
     LoadTextures(textures);
 
@@ -64,27 +67,27 @@ void Game::SetupGameWorld(void)
 
     // Setup the player object (position, texture, vertex count)
     // Note that, in this specific implementation, the player object should always be the first object in the game object vector 
-    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship]));
+    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship], glm::vec2(1.0f, 1.0f), 0.4f));
     float pi_over_two = glm::pi<float>() / 2.0f;
     game_objects_[0]->SetRotation(pi_over_two);
 
     // Setup other objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-1.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_green_ship]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(-1.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_green_ship], glm::vec2(1.0f, 1.0f), 0.4f));
     game_objects_[1]->SetRotation(pi_over_two);
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(1.0f, -0.5f, 0.0f), sprite_, &sprite_shader_, tex_[tex_blue_ship]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(1.0f, -0.5f, 0.0f), sprite_, &sprite_shader_, tex_[tex_blue_ship], glm::vec2(1.0f, 1.0f), 0.4f));
     game_objects_[2]->SetRotation(pi_over_two);
 	// Setup collectible objects in random locations
 	for (int i = 0; i < 10; i++) {
 		float x = (rand() % 8) - 4;
 		float y = (rand() % 7) - 3.5;
-		game_objects_.push_back(new CollectibleGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[yellow_orb]));
+		game_objects_.push_back(new CollectibleGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[yellow_orb], glm::vec2(1.0f, 1.0f), 0.1f));
 		game_objects_[3 + i]->SetRotation(pi_over_two);
 	}
 
     // Setup background
     // In this specific implementation, the background is always the
     // last object
-    GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_stars]);
+    GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_stars], glm::vec2(1.0f, 1.0f));
     background->SetScale(glm::vec2(12.0, 12.0));
     game_objects_.push_back(background);
 
@@ -105,7 +108,7 @@ void Game::DestroyGameWorld(void)
 void Game::HandleControls(double delta_time)
 {
     // Get player game object
-    GameObject *player = game_objects_[0];
+    PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[0]);
     // Get current position and angle
     glm::vec3 curpos = player->GetPosition();
     float angle = player->GetRotation();
@@ -113,7 +116,7 @@ void Game::HandleControls(double delta_time)
     glm::vec3 dir = player->GetBearing();
     // Adjust motion increment and angle increment 
     // if translation or rotation is too slow
-    float speed = delta_time*500.0;
+    float speed = delta_time*1000.0;
     float motion_increment = 0.001*speed;
     float angle_increment = (glm::pi<float>() / 1800.0f)*speed;
 
@@ -121,10 +124,12 @@ void Game::HandleControls(double delta_time)
     // Only if the player is not dying
     if (!player->isDying) {
         if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-            player->SetPosition(curpos + motion_increment * dir);
+            //player->SetPosition(curpos + motion_increment * dir);
+			player->update_velocity(0);
         }
         if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-            player->SetPosition(curpos - motion_increment * dir);
+            //player->SetPosition(curpos - motion_increment * dir);
+			player->update_velocity(1);
         }
         if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
             player->SetRotation(angle - angle_increment);
@@ -132,11 +137,17 @@ void Game::HandleControls(double delta_time)
         if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
             player->SetRotation(angle + angle_increment);
         }
-        if (glfwGetKey(window_, GLFW_KEY_Z) == GLFW_PRESS) {
-            player->SetPosition(curpos - motion_increment * player->GetRight());
+        if (glfwGetKey(window_, GLFW_KEY_Q) == GLFW_PRESS) {
+            player->update_velocity(3);
         }
-        if (glfwGetKey(window_, GLFW_KEY_C) == GLFW_PRESS) {
-            player->SetPosition(curpos + motion_increment * player->GetRight());
+        if (glfwGetKey(window_, GLFW_KEY_E) == GLFW_PRESS) {
+            player->update_velocity(2);
+        }
+		if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS) {
+            if (!player->cooling_down()) {
+                player->shoot_projectile();
+                game_objects_.insert(game_objects_.begin() + game_objects_.size() - 1, new ProjectileGameObject(player->GetPosition(), player->GetBearing(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.4f), 5.0f, 1, 5.0f, 0.2f, false));
+            }
         }
         if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window_, true);
@@ -157,15 +168,22 @@ void Game::Update(double delta_time)
     for (int i = 0; i < game_objects_.size(); i++) {
         // Get the current game object
         GameObject* current_game_object = game_objects_[i];
-
-       /* if (current_game_object == game_objects_[0]) {
-			current_game_object->printLocation();
-        }*/
-
+		// Evaluate if the current game object is a projectile object
+        ProjectileGameObject* projectile_curr = dynamic_cast<ProjectileGameObject*>(current_game_object);
+		// Evaluate if the current game object is an enemy object
+		EnemyGameObject* enemy_curr = dynamic_cast<EnemyGameObject*>(current_game_object);
         // Update the current game object
         current_game_object->Update(delta_time);
+        // Projectile handling
+        if (projectile_curr) {
+            if (projectile_curr->timer->Finished()) {
+                game_objects_.erase(game_objects_.begin() + i);
+                delete current_game_object;
+                continue;
+            }
+        }
 		// Check if the object is dying
-        if (current_game_object->isDying) {
+        else if (current_game_object->isDying) {
             // If the object is dying, check if the timer has finished
             if (current_game_object->timer->Finished()) {
 				// If player dies, comment "Game over" and close the window
@@ -187,22 +205,26 @@ void Game::Update(double delta_time)
         // it's the background covering the whole game world
         for (int j = i + 1; j < (game_objects_.size()-1); j++) {
             GameObject* other_game_object = game_objects_[j];
-			// Evalute if the other game object is an enemy object
+			// Evaluate if the other game object is an enemy object
             EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(other_game_object);
-
+            // Evaluate if the other game object is a Collider Object
+            ColliderObject* collider = dynamic_cast<ColliderObject*>(other_game_object);
+			// Evaluate if other game object is a projectile object
+			ProjectileGameObject* projectile = dynamic_cast<ProjectileGameObject*>(other_game_object);
+			//Evaluate if other game object is a collectible object
+			CollectibleGameObject* collectible = dynamic_cast<CollectibleGameObject*>(other_game_object);
             // Compute distance between object i and object j
             float distance = glm::length(current_game_object->GetPosition() - other_game_object->GetPosition());
-            // If distance is below a threshold, we have a collision
             if (current_game_object == player) {
-                if (distance < 0.8f) {
+                //TODO: Make more general collision function that automatically handles both ray-circle and circle-circle collisions
+                if (collider && player->circleCollision(collider)) {
                     // Checks to see if the object that it is currently colliding with the player is new
                     if (!other_game_object->isDying && current_game_object->prev_collider != other_game_object) {
-						if (dynamic_cast<CollectibleGameObject*>(other_game_object)) {
+						if (collectible && !collectible->getGhostMode()) {
 							// If the object is a collectible object, collect it
                             player->collect();
-							// Remove the object from the game world
-							game_objects_.erase(game_objects_.begin() + j);
-                            delete other_game_object;
+							// Sets the object to ghost mode
+							collectible->setGhostMode(true);
 						}
 						else if(!player->isDying && enemy){
 							// Deals damage to the player and the object that the player collided with
@@ -227,6 +249,16 @@ void Game::Update(double delta_time)
                 // This is to ensure that only 1 health is removed per collision
                 else if(other_game_object == player->prev_collider)
                     current_game_object->prev_collider = nullptr;
+            }
+            else if (enemy_curr) {
+				//check if enemy is colliding with projectile
+                //TODO: Change to ray-circle colision
+                if (projectile && projectile->circleCollision(enemy_curr) && !enemy_curr->isDying) {
+					enemy_curr->hurt();
+					// Remove the projectile from the game world
+					game_objects_.erase(game_objects_.begin() + j);
+					delete other_game_object;
+                }
             }
         }
     }
@@ -416,7 +448,7 @@ void Game::SpawnObject() {
 	// use either texture 1 or 2
 	int texture = rand() % 2 + 1;
 	// Create the new object
-	EnemyGameObject* new_object = new EnemyGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[texture]);
+	EnemyGameObject* new_object = new EnemyGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[texture], glm::vec2(1.0f, 1.0f), 0.4f);
     new_object->SetRotation(pi_over_two);
 	// Add the new object to the game world
 	game_objects_.insert(game_objects_.begin() + game_objects_.size() - 1, new_object);

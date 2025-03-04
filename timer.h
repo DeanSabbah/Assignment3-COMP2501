@@ -17,6 +17,10 @@ namespace game {
             bool Finished();
 			// Get runnning status
             bool Running() const;
+            // Get amount of time running
+			double get_run_time() const;
+			// Get target time
+			double get_target() const;
 
         private:
 			// Time when the timer started

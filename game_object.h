@@ -2,6 +2,8 @@
 #define GAME_OBJECT_H_
 
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtx/rotate_vector.hpp> 
 #define GLEW_STATIC
 #include <GL/glew.h>
 
@@ -19,7 +21,7 @@ namespace game {
 
         public:
             // Constructor
-            GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture);
+            GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2 scale);
             ~GameObject();
 
             // Update the GameObject's state. Can be overriden in children
@@ -40,10 +42,16 @@ namespace game {
             // Get vector pointing to the right side of the game object
             glm::vec3 GetRight(void) const;
 
+			// Get object's ghost status
+			bool getGhostMode() const { return ghost_; }
+
             // Setters
             inline void SetPosition(const glm::vec3& position) { position_ = position; }
             inline void SetScale(glm::vec2 scale) { scale_ = scale; }
             void SetRotation(float angle);
+
+			// Set the object to be a ghost
+			void setGhostMode(bool ghost) { ghost_ = ghost; }
 
             void hurt();
             // Bool to make sure the player is not hurt when they collide with a dying object
@@ -59,6 +67,7 @@ namespace game {
         protected:
             int health;
             void die();
+            bool ghost_ = false;
             // Object's Transform Variables
             glm::vec3 position_;
             glm::vec2 scale_;
@@ -69,6 +78,7 @@ namespace game {
  
             // Shader
             Shader *shader_;
+			Shader grayscale_shader_;
 
             // Object's texture reference
             GLuint texture_;

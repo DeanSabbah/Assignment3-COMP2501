@@ -12,6 +12,7 @@ namespace game {
 	}
 
 	void Timer::Start(float end_time){
+		end_time_ = end_time;
 		start_time_ = glfwGetTime();
 		end_time_ = end_time;
 		checked = false;
@@ -32,6 +33,14 @@ namespace game {
 
 	bool Timer::Running() const {
 		return running;
+	}
+
+	double Timer::get_run_time() const {
+		return glfwGetTime() - start_time_;
+	}
+
+	double Timer::get_target() const {
+		return end_time_;
 	}
 
 } // namespace game

@@ -5,7 +5,7 @@
 
 using namespace game;
 
-EnemyGameObject::EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture) : GameObject(position, geom, shader, texture) {
+EnemyGameObject::EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float radius) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
 	// random height and width for the patrol area
 	height_ = (rand() % 20 - 10) / 10.0f;
 	radius_ = (rand() % 20 - 10) / 10.0f;
@@ -53,6 +53,10 @@ bool EnemyGameObject::getState() const {
 	return state_;
 }
 
+float EnemyGameObject::getSpeed() const {
+	return speed_;
+}
+
 void EnemyGameObject::patrol(double delta_time) {
 	glm::vec3 new_pos;
 	// Get the new position
@@ -75,7 +79,7 @@ void EnemyGameObject::intercept(double delta_time) {
 		SetRotation(atan2(velocity_.y, velocity_.x));
 	}
 	// Set the new position
-	SetPosition(position_ + (velocity_ * 0.001f * (float)delta_time * 420.0f));
+	SetPosition(position_ + (velocity_ * 0.001f * (float)delta_time * speed_));
 	// Update the distance to the player, so that when the enemy is far enough, it will patrol around it's current locaiton
 	center_ = position_;
 
