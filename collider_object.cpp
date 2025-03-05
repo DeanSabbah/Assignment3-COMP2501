@@ -39,13 +39,13 @@ namespace game {
         glm::vec3 closestPoint = rayOrigin + t * rayDirection;
 
         // Distance from the closest point to the circle center
-        float distanceSquared = glm::length(closestPoint - circleCenter);
+        float distance= glm::length(closestPoint - circleCenter);
 
-        // Check if the distance is less than the circle's radius squared
-        bool collision = distanceSquared <= circleRadius * circleRadius;
+        // Check if the distance is less than the circle's radius
+        bool intersect = distance <= circleRadius;
 
         // Check if the closest point is within the max distance from the ray origin
         float distanceFromOrigin = glm::length(closestPoint - rayOrigin);
-        return collision && distanceFromOrigin <= radius_;
+        return intersect && distanceFromOrigin <= (radius_ + circleRadius);
     }
 }

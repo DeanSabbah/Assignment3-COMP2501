@@ -21,8 +21,9 @@ namespace game {
 
 	// Update function for moving the player object around
 	void PlayerGameObject::Update(double delta_time) {
-		// Move player object
-		position_ += (float)delta_time * velocity_;
+		if(!isDying)
+			// Move player object
+			position_ += (float)delta_time * velocity_;
 		if (invincibility_timer->Finished()) {
 			invincible_ = false;
 			setTexture(1);
