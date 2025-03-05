@@ -8,7 +8,7 @@ namespace game {
 		It overrides GameObject's update method, so that you can check for input to change the velocity of the player
 	*/
 
-	PlayerGameObject::PlayerGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float radius) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
+	PlayerGameObject::PlayerGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2& scale, const float radius) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
 		health = 3;
 		invincibility_timer = new Timer();
 		cooldown = new Timer();
@@ -71,7 +71,6 @@ namespace game {
 			float angle = glm::acos(dot);
 			float stepAngle = glm::radians(1.0f);
 			if (angle < stepAngle) stepAngle = angle;
-			float cross = currentDir.x * targetDir.y - currentDir.y * targetDir.x;
 			glm::vec3 rotationAxis = glm::cross(currentDir, targetDir);
 			// Check if the rotation axis is parallel to the current direction
 			// If so, choose an arbitrary perpendicular axis

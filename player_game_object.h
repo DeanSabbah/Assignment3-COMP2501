@@ -13,7 +13,7 @@ namespace game {
 
         public:
 			// Constructor
-            PlayerGameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2 scale, const float radius);
+            PlayerGameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2& scale, const float radius);
 			// Destructor
             ~PlayerGameObject();
 
@@ -37,6 +37,7 @@ namespace game {
 			bool cooling_down() { return !cooldown->Finished(); }
 			// Return position for Collider
 			glm::vec3 ColliderObject::getPosition() const { return position_; }
+			glm::vec3 ColliderObject::getBearing() const { return GetBearing(); }
 
         private:
 			// Maximum velocity of the player

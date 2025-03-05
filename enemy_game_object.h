@@ -9,7 +9,7 @@ namespace game {
 	class EnemyGameObject : public GameObject, public ColliderObject {
 		public:
 			// Constructor
-			EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float radius);
+			EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2& scale, const float radius);
 			// Destructor
 			~EnemyGameObject();
 			void Update(double delta_time) override;
@@ -18,6 +18,7 @@ namespace game {
 			bool getState() const;
 			float getSpeed() const;
 			glm::vec3 ColliderObject::getPosition() const { return position_; }
+			glm::vec3 ColliderObject::getBearing() const { return GetBearing(); }
 		private:
 			// Object's velcity
 			glm::vec3 velocity_;

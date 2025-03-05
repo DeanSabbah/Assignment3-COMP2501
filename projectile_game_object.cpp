@@ -2,7 +2,7 @@
 #include <iostream>
 
 namespace game {
-	ProjectileGameObject::ProjectileGameObject(const glm::vec3& position, glm::vec3& bearing, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float speed, const int damage, const float time, const float radius, const bool type) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius, type), speed_(speed), damage_(damage) {
+	ProjectileGameObject::ProjectileGameObject(const glm::vec3& position, glm::vec3& bearing, Geometry* geom, Shader* shader, GLuint texture, glm::vec2& scale, const float speed, const int damage, const float time, const float radius, const bool type) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius, type), speed_(speed), damage_(damage) {
 		timer = new Timer();
 		timer->Start(time);
 		SetRotation(glm::atan(bearing.y, bearing.x));

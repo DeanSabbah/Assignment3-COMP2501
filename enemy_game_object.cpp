@@ -5,7 +5,7 @@
 
 using namespace game;
 
-EnemyGameObject::EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2 scale, const float radius) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
+EnemyGameObject::EnemyGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, glm::vec2& scale, const float radius) : GameObject(position, geom, shader, texture, scale), ColliderObject(radius) {
 	// random height and width for the patrol area
 	height_ = (rand() % 20 - 10) / 10.0f;
 	radius_ = (rand() % 20 - 10) / 10.0f;

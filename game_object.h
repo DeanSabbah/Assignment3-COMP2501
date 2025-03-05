@@ -21,7 +21,7 @@ namespace game {
 
         public:
             // Constructor
-            GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2 scale);
+            GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2& scale);
             ~GameObject();
 
             // Update the GameObject's state. Can be overriden in children
@@ -47,7 +47,7 @@ namespace game {
 
             // Setters
             inline void SetPosition(const glm::vec3& position) { position_ = position; }
-            inline void SetScale(glm::vec2 scale) { scale_ = scale; }
+            inline void SetScale(glm::vec2& scale) { scale_ = scale; }
             void SetRotation(float angle);
 
 			// Set the object to be a ghost

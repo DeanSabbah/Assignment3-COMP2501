@@ -8,7 +8,7 @@
 const std::string resources_directory_g = RESOURCES_DIRECTORY;
 namespace game {
 
-GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2 scale) 
+GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2& scale) 
 {
     // Initialize all attributes
     position_ = position;
