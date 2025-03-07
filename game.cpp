@@ -194,6 +194,7 @@ void Game::Update(double delta_time)
                 if (current_game_object == player) {
                     std::cout << "Game over" << std::endl;
                     glfwSetWindowShouldClose(window_, true);
+                    return;
                 }
 				// If the timer has finished, remove the object from the game world
                 game_objects_.erase(game_objects_.begin() + i);

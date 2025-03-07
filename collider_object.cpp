@@ -1,4 +1,5 @@
 #include "collider_object.h"
+#include <iostream>
 
 namespace game {
 	// General collision function
@@ -33,7 +34,7 @@ namespace game {
         glm::vec3 oc = circleCenter - rayOrigin;
 
         // Project oc onto the ray direction
-        float t = glm::dot(oc, rayDirection);
+        float t = glm::dot(2.0f * oc, rayDirection);
 
         // Closest point on the ray to the circle center
         glm::vec3 closestPoint = rayOrigin + t * rayDirection;

@@ -61,14 +61,14 @@ void GameObject::Update(double delta_time) {}
 
 void GameObject::Render(glm::mat4 view_matrix, double current_time){
 
-	// Check if the object is a ghost and set the shader accordingly
-    Shader* active_shader = ghost_ ? &grayscale_shader_ : shader_;
-
     // Set up the shader
-    active_shader->Enable();
+    shader_->Enable();
+
+    // Set the grayscale mode
+    shader_->SetUniform1i("grayscale", ghost_);
 
     // Set up the view matrix
-    active_shader->SetUniformMat4("view_matrix", view_matrix);
+    shader_->SetUniformMat4("view_matrix", view_matrix);
 
     // Setup the scaling matrix for the shader
     glm::mat4 scaling_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale_.x, scale_.y, 1.0));
@@ -83,10 +83,10 @@ void GameObject::Render(glm::mat4 view_matrix, double current_time){
     glm::mat4 transformation_matrix = translation_matrix * rotation_matrix * scaling_matrix;
 
     // Set the transformation matrix in the shader
-    active_shader->SetUniformMat4("transformation_matrix", transformation_matrix);
+    shader_->SetUniformMat4("transformation_matrix", transformation_matrix);
 
     // Set up the geometry
-    geometry_->SetGeometry(active_shader->GetShaderProgram());
+    geometry_->SetGeometry(shader_->GetShaderProgram());
 
     // Bind the entity's texture
     glBindTexture(GL_TEXTURE_2D, texture_);
@@ -94,7 +94,7 @@ void GameObject::Render(glm::mat4 view_matrix, double current_time){
     // Draw the entity
     glDrawElements(GL_TRIANGLES, geometry_->GetSize(), GL_UNSIGNED_INT, 0);
 
-	active_shader->Disable();
+    shader_->Disable();
 }
 
 // Removes 1 hp, call death function when hp is 0
