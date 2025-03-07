@@ -78,7 +78,6 @@ namespace game {
  
             // Shader
             Shader *shader_;
-			Shader grayscale_shader_;
 
             // Object's texture reference
             GLuint texture_;

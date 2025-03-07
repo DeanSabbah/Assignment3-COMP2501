@@ -20,7 +20,6 @@ GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader
     health = 1;
     prev_collider = nullptr;
 	timer = new Timer();
-    grayscale_shader_.Init((resources_directory_g + std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/sprite_fragment_grayscale.glsl")).c_str());
 }
 
 game::GameObject::~GameObject() {
