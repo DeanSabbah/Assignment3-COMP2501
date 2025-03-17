@@ -11,8 +11,10 @@ namespace game {
 		ProjectileGameObject(const glm::vec3& position, glm::vec3& bearing, Geometry* geom, Shader* shader, GLuint texture, glm::vec2& scale, const float speed, const int damage, const float time, const float radius, const bool type);
 		~ProjectileGameObject();
 		void Update(double delta_time) override;
-		glm::vec3 ColliderObject::getPosition() const { return position_; }
-		glm::vec3 ColliderObject::getBearing() const { return GetBearing(); }
+		// Collision functions
+		bool circleCollision(ColliderObject* other) const override;
+		bool rayCollision(ColliderObject* other) const override;
+
 		int getDamage() const { return damage_; }
 	private:
 		const float speed_;

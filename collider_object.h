@@ -13,9 +13,8 @@ namespace game {
 
 		float getRadius() const { return radius_; }
 		bool getColliderType() const { return collider_type; }
-		virtual glm::vec3 getPosition() const = 0;
-		virtual glm::vec3 getBearing() const = 0;
-		bool collide(const ColliderObject* other) const;
+		// General collision function
+		bool collide(ColliderObject* other) const { return collider_type ? circleCollision(other) : rayCollision(other); }
 	protected:
 		// Radius of the collider
 		const float radius_;
@@ -24,8 +23,8 @@ namespace game {
 		// Can change to enum later for more types
 		const bool collider_type = false;
 
-		bool circleCollision(const ColliderObject* other) const;
-		bool rayCollision(const ColliderObject* other) const;
+		virtual bool circleCollision(ColliderObject* other) const = 0;
+		virtual bool rayCollision(ColliderObject* other) const = 0;
 	};
 }
 

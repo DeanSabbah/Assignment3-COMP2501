@@ -32,7 +32,6 @@ set(SRCS
     shader.cpp
     sprite.cpp
     timer.cpp
-    collider_object.cpp
     sprite_vertex_shader.glsl
     sprite_fragment_shader.glsl
 )

@@ -82,7 +82,7 @@ void Game::SetupGameWorld(void)
 	for (int i = 0; i < 90; i++) {
 		float x = (rand() % 34) - 17;
 		float y = (rand() % 34) - 17;
-		game_objects_.push_back(new CollectibleGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[yellow_orb], glm::vec2(1.0f, 1.0f), 0.1f));
+		game_objects_.push_back(new CollectibleGameObject(glm::vec3(x, y, 0.0f), sprite_, &sprite_shader_, tex_[yellow_orb], glm::vec2(1.0f, 1.0f), 0.3f));
 		game_objects_[3 + i]->SetRotation(pi_over_two);
 	}
 
@@ -152,7 +152,7 @@ void Game::HandleControls(double delta_time)
 		if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS) {
             if (!player->cooling_down()) {
                 player->shoot_projectile();
-                game_objects_.insert(game_objects_.begin() + game_objects_.size() - BACKGROUND_OBJECTS, new ProjectileGameObject(player->GetPosition(), player->GetBearing(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.4f), 5.0f, 1, 5.0f, 0.3f, true));
+                game_objects_.insert(game_objects_.begin() + game_objects_.size() - BACKGROUND_OBJECTS, new ProjectileGameObject(player->GetPosition(), player->GetBearing(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.4f), 5.0f, 1, 5.0f, 0.2f, true));
             }
         }
         if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {

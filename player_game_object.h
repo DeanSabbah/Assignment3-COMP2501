@@ -35,9 +35,10 @@ namespace game {
 			void shoot_projectile();
 			// Returns cooldown status
 			bool cooling_down() { return !cooldown->Finished(); }
-			// Return position for Collider
-			glm::vec3 ColliderObject::getPosition() const { return position_; }
-			glm::vec3 ColliderObject::getBearing() const { return GetBearing(); }
+			// Collision functions
+			bool circleCollision(ColliderObject* other) const override;
+			bool rayCollision(ColliderObject* other) const override;
+			
 
         private:
 			// Maximum velocity of the player

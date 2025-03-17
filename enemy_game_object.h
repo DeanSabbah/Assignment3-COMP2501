@@ -17,8 +17,9 @@ namespace game {
 			void setState(bool state);
 			bool getState() const;
 			float getSpeed() const;
-			glm::vec3 ColliderObject::getPosition() const { return position_; }
-			glm::vec3 ColliderObject::getBearing() const { return GetBearing(); }
+			// Collision functions
+			bool circleCollision(ColliderObject* other) const override;
+			bool rayCollision(ColliderObject* other) const override;
 		private:
 			// Object's velcity
 			glm::vec3 velocity_;
