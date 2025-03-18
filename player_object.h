@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #include "component.h"
@@ -14,6 +15,7 @@ namespace game {
 		PlayerObject();
 		~PlayerObject();
 		void Update(double delta_time) override;
+		void init() override;
 		// Function to collect objects
 		void collect();
 		// Returns if the player is invincible

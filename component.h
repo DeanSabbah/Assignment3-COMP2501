@@ -8,8 +8,9 @@ namespace game {
     public:
         virtual ~Component() = default;
         virtual void Update(double delta_time) {}
+        virtual void init() {}
         GameObject* GetParent() const;
-
+        void setParent(GameObject* parent);
     protected:
         GameObject* parent = nullptr;
     };

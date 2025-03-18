@@ -1,6 +1,7 @@
 // Interface to make gameobjects collide with each other
 #pragma once
 
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #include "component.h"

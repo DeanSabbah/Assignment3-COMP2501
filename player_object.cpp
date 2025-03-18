@@ -7,11 +7,7 @@ namespace game {
 		Component that handles the player object
 	*/
 
-	PlayerObject::PlayerObject() {
-		parent->setHealth(3);
-		invincibility_timer = new Timer();
-		cooldown = new Timer();
-	}
+	PlayerObject::PlayerObject() {}
 
 	PlayerObject::~PlayerObject() {
 		delete invincibility_timer;
@@ -26,6 +22,12 @@ namespace game {
 			invincible_ = false;
 			parent->setTexture(1);
 		}
+	}
+
+	void PlayerObject::init() {
+		parent->setHealth(3);
+		invincibility_timer = new Timer();
+		cooldown = new Timer();
 	}
 
 	void PlayerObject::collect() {

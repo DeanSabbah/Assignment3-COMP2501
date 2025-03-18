@@ -13,8 +13,7 @@
 #include "shader.h"
 #include "geometry.h"
 #include "timer.h"
-
-class Component;
+#include "component.h"
 
 namespace game {
 
@@ -33,17 +32,18 @@ namespace game {
             T* AddComponent(Args&&... args) {
                 static_assert(std::is_base_of_v<Component, T>, "T must inherit from Component");
                 auto component = std::make_unique<T>(std::forward<Args>(args)...);
-                component->parent = this;
+                component->setParent(this);
+				component->init();
                 T* rawPtr = component.get();
-                components[typeid(T)] = std::move(component);
+                components_[typeid(T)] = std::move(component);
                 return rawPtr;
             }
 
 			// Get a component from the GameObject
 			template <typename T>
             T* GetComponent() {
-                auto it = components.find(typeid(T));
-                return (it != components.end()) ? dynamic_cast<T*>(it->second.get()) : nullptr;
+                auto it = components_.find(typeid(T));
+                return (it != components_.end()) ? dynamic_cast<T*>(it->second.get()) : nullptr;
             }
 
             // Update the GameObject's state. Can be overriden in children
@@ -112,7 +112,5 @@ namespace game {
     }; // class GameObject
 
 } // namespace game
-
-#include "component.h"
 
 #endif // GAME_OBJECT_H_

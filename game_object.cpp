@@ -1,4 +1,5 @@
 #define GLM_FORCE_RADIANS
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
@@ -55,7 +56,11 @@ void GameObject::SetRotation(float angle){
 }
 
 
-void GameObject::Update(double delta_time) {}
+void GameObject::Update(double delta_time) {
+    for (auto& component_pair : components_) {
+        component_pair.second->Update(delta_time); // Call component's Update
+    }
+}
 
 
 void GameObject::Render(glm::mat4 view_matrix, double current_time){
