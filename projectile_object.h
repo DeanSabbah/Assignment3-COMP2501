@@ -9,7 +9,7 @@ using namespace game;
 
 class ProjectileObject : public Component {
 public:
-	ProjectileObject(const glm::vec3 bearing,  const float speed, const int damage, const float time);
+	ProjectileObject(const float speed, const int damage, const float time);
 	~ProjectileObject();
 	void Update(double delta_time) override;
 	void init() override;

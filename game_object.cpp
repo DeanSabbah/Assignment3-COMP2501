@@ -24,6 +24,7 @@ GameObject::GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader
 }
 
 game::GameObject::~GameObject() {
+    components_.clear();
 	delete timer;
 }
 

@@ -12,7 +12,7 @@ EnemyObject::~EnemyObject() {
 void EnemyObject::Update(double delta_time) {
 	// If the enemy is close enough to the player, it will intercept the player
 	// Will not move the enemy if they are dying
-	if (parent->isDying()) {
+	if (!parent->isDying()) {
 		if (state_)
 			intercept(delta_time);
 		else

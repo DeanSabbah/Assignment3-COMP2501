@@ -115,9 +115,10 @@ void Game::DestroyGameWorld(void)
 {
     // Free memory for all objects
     // Only need to delete objects that are not automatically freed
-    for (int i = 0; i < game_objects_.size(); i++){
+    /*for (int i = 0; i < game_objects_.size(); i++){
         delete game_objects_[i];
-    }
+    }*/
+    game_objects_.clear();
 }
 
 
@@ -164,8 +165,9 @@ void Game::HandleControls(double delta_time)
             if (!player_obj->cooling_down()) {
                 player_obj->shoot_projectile();
 				GameObject* projectile = new GameObject(player->GetPosition(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.8f));
+				projectile->SetRotation(player->GetRotation());
 				projectile->AddComponent<ColliderObject>(0.2f, true);
-				projectile->AddComponent<ProjectileObject>(player->GetBearing(), 5.0f, 1, 5.0f);
+				projectile->AddComponent<ProjectileObject>(5.0f, 1, 5.0f);
                 game_objects_.insert(game_objects_.begin() + game_objects_.size() - BACKGROUND_OBJECTS, projectile);
             }
         }
@@ -197,7 +199,7 @@ void Game::Update(double delta_time)
         // Projectile handling
         if (projectile_curr && current_game_object->timer->Finished()) {
             game_objects_.erase(game_objects_.begin() + i);
-            delete current_game_object;
+            //delete current_game_object;
             continue;
         }
 		// Check if the object is dying
@@ -213,7 +215,7 @@ void Game::Update(double delta_time)
 				// If the timer has finished, remove the object from the game world
                 game_objects_.erase(game_objects_.begin() + i);
                 // Deletes dead object from memory
-                delete current_game_object;
+                //delete current_game_object;
                 // Makes sure that we don't call the deleted object by skipping the rest of the loop
                 continue;
             }
@@ -274,7 +276,7 @@ void Game::Update(double delta_time)
 					enemy_curr->GetParent()->hurt();
 					// Remove the projectile from the game world
 					game_objects_.erase(game_objects_.begin() + j);
-					delete other_game_object;
+					//delete other_game_object;
                     continue;
                 }
             }

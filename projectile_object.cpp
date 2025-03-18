@@ -3,7 +3,7 @@
 
 using namespace game;
 
-ProjectileObject::ProjectileObject(const glm::vec3 bearing, const float speed, const int damage, const float time) : speed_(speed), damage_(damage), time_(time) {}
+ProjectileObject::ProjectileObject(const float speed, const int damage, const float time) : speed_(speed), damage_(damage), time_(time) {}
 
 ProjectileObject::~ProjectileObject() {
 	delete parent->timer;
