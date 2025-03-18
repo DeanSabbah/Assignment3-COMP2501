@@ -69,7 +69,7 @@ void Game::SetupGameWorld(void)
 
     // Setup the player object (position, texture, vertex count)
     // Note that, in this specific implementation, the player object should always be the first object in the game object vector 
-    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship], glm::vec2(1.0f, 1.0f), 0.4f));
+    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship], glm::vec2(1.0f, 1.0f), 0.8f));
     float pi_over_two = glm::pi<float>() / 2.0f;
     game_objects_[0]->SetRotation(pi_over_two);
 
@@ -128,7 +128,7 @@ void Game::HandleControls(double delta_time)
 
     // Check for player input and make changes accordingly
     // Only if the player is not dying
-    if (!player->isDying) {
+    if (!player->isDying()) {
         if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
             //player->SetPosition(curpos + motion_increment * dir);
 			player->update_velocity(0);
@@ -152,7 +152,7 @@ void Game::HandleControls(double delta_time)
 		if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS) {
             if (!player->cooling_down()) {
                 player->shoot_projectile();
-                game_objects_.insert(game_objects_.begin() + game_objects_.size() - BACKGROUND_OBJECTS, new ProjectileGameObject(player->GetPosition(), player->GetBearing(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.4f), 5.0f, 1, 5.0f, 0.2f, true));
+                game_objects_.insert(game_objects_.begin() + game_objects_.size() - BACKGROUND_OBJECTS, new ProjectileGameObject(player->GetPosition(), player->GetBearing(), sprite_, &sprite_shader_, 9, glm::vec2(1.2f, 0.8f), 5.0f, 1, 5.0f, 0.2f, true));
             }
         }
         if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -187,7 +187,7 @@ void Game::Update(double delta_time)
             continue;
         }
 		// Check if the object is dying
-        else if (current_game_object->isDying) {
+        else if (current_game_object->isDying()) {
             // If the object is dying, check if the timer has finished
             if (current_game_object->timer->Finished()) {
 				// If player dies, comment "Game over" and close the window
@@ -223,14 +223,14 @@ void Game::Update(double delta_time)
             if (current_game_object == player) {
                 if (collider && player->collide(collider)) {
                     // Checks to see if the object that it is currently colliding with the player is new
-                    if (!other_game_object->isDying && current_game_object->prev_collider != other_game_object) {
+                    if (!other_game_object->isDying() && current_game_object->prev_collider != other_game_object) {
 						if (collectible && !collectible->getGhostMode()) {
 							// If the object is a collectible object, collect it
                             player->collect();
 							// Sets the object to ghost mode
 							collectible->setGhostMode(true);
 						}
-						else if(!player->isDying && enemy){
+						else if(!player->isDying() && enemy){
 							// Deals damage to the player and the object that the player collided with
 							current_game_object->prev_collider = other_game_object;
 							other_game_object->hurt();
@@ -256,11 +256,12 @@ void Game::Update(double delta_time)
             }
             else if (enemy_curr) {
 				//check if enemy is colliding with projectile
-                if (projectile && projectile->collide(enemy_curr) && !enemy_curr->isDying) {
+                if (projectile && projectile->collide(enemy_curr) && !enemy_curr->isDying()) {
 					enemy_curr->hurt();
 					// Remove the projectile from the game world
 					game_objects_.erase(game_objects_.begin() + j);
 					delete other_game_object;
+                    continue;
                 }
             }
         }

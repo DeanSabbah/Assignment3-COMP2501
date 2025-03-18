@@ -54,8 +54,7 @@ namespace game {
 			void setGhostMode(bool ghost) { ghost_ = ghost; }
 
             void hurt();
-            // Bool to make sure the player is not hurt when they collide with a dying object
-            bool isDying = false;
+			bool isDying() { return _dying; }
             GameObject* prev_collider;
 			Timer* timer;
 
@@ -66,6 +65,8 @@ namespace game {
 
         protected:
             int health;
+            // Bool to make sure the player is not hurt when they collide with a dying object
+            bool _dying = false;
             void die();
             bool ghost_ = false;
             // Object's Transform Variables

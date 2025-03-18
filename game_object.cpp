@@ -106,7 +106,7 @@ void GameObject::hurt() {
 
 // Plays the explosion animation and starts timer
 void GameObject::die() {
-    isDying = true;
+    _dying = true;
 	timer->Start(5.0);
 	setTexture(6);
 }
