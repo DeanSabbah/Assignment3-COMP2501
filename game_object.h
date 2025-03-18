@@ -6,10 +6,15 @@
 #include <glm/gtx/rotate_vector.hpp> 
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include <unordered_map>
+#include <typeindex>
+#include <memory>
 
 #include "shader.h"
 #include "geometry.h"
 #include "timer.h"
+
+class Component;
 
 namespace game {
 
@@ -18,11 +23,28 @@ namespace game {
         The update and render methods are virtual, so you can inherit them from GameObject and override the update or render functionality (see PlayerGameObject for reference)
     */
     class GameObject {
-
         public:
             // Constructor
             GameObject(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, glm::vec2& scale);
             ~GameObject();
+
+			// Add a component to the GameObject
+			template <typename T, typename... Args>
+            T* AddComponent(Args&&... args) {
+                static_assert(std::is_base_of_v<Component, T>, "T must inherit from Component");
+                auto component = std::make_unique<T>(std::forward<Args>(args)...);
+                component->parent = this;
+                T* rawPtr = component.get();
+                components[typeid(T)] = std::move(component);
+                return rawPtr;
+            }
+
+			// Get a component from the GameObject
+			template <typename T>
+            T* GetComponent() {
+                auto it = components.find(typeid(T));
+                return (it != components.end()) ? dynamic_cast<T*>(it->second.get()) : nullptr;
+            }
 
             // Update the GameObject's state. Can be overriden in children
             virtual void Update(double delta_time);
@@ -52,6 +74,8 @@ namespace game {
 
 			// Set the object to be a ghost
 			void setGhostMode(bool ghost) { ghost_ = ghost; }
+			// Set the objects health
+			void setHealth(int h) { health = h; }
 
             void hurt();
 			bool isDying() { return _dying; }
@@ -64,6 +88,8 @@ namespace game {
 
 
         protected:
+			// Map to store the object's components
+            std::unordered_map<std::type_index, std::unique_ptr<Component>> components_;
             int health;
             // Bool to make sure the player is not hurt when they collide with a dying object
             bool _dying = false;
@@ -86,5 +112,7 @@ namespace game {
     }; // class GameObject
 
 } // namespace game
+
+#include "component.h"
 
 #endif // GAME_OBJECT_H_

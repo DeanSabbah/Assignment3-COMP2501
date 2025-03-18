@@ -1,11 +1,12 @@
 // Interface to make gameobjects collide with each other
-#ifndef COLLIDER_OBJECT_H
-#define COLLIDER_OBJECT_H
+#pragma once
 
 #include <glm/glm.hpp>
 
+#include "component.h"
+
 namespace game {
-	class ColliderObject {
+	class ColliderObject : public Component {
 	public:
 		// Constructor
 		ColliderObject(float radius, bool type = 0) : radius_(radius), collider_type(type) {}
@@ -14,7 +15,7 @@ namespace game {
 		float getRadius() const { return radius_; }
 		bool getColliderType() const { return collider_type; }
 		// General collision function
-		bool collide(ColliderObject* other) const { return collider_type ? circleCollision(other) : rayCollision(other); }
+		bool collide(GameObject* other) const;
 	protected:
 		// Radius of the collider
 		const float radius_;
@@ -23,9 +24,7 @@ namespace game {
 		// Can change to enum later for more types
 		const bool collider_type = false;
 
-		virtual bool circleCollision(ColliderObject* other) const = 0;
-		virtual bool rayCollision(ColliderObject* other) const = 0;
+		bool circleCollision(GameObject* other) const;
+		bool rayCollision(GameObject* other) const;
 	};
 }
-
-#endif // COLLIDER_OBJECT_H

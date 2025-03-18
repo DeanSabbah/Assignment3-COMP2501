@@ -3,13 +3,12 @@
 
 #include "game_object.h"
 #include "timer.h"
-#include "projectile_game_object.h"
 #include "collider_object.h"
 
 namespace game {
 
     // Inherits from GameObject
-    class PlayerGameObject : public GameObject, public ColliderObject {
+    class PlayerGameObject : public GameObject {
 
         public:
 			// Constructor
@@ -35,9 +34,6 @@ namespace game {
 			void shoot_projectile();
 			// Returns cooldown status
 			bool cooling_down() { return !cooldown->Finished(); }
-			// Collision functions
-			bool circleCollision(ColliderObject* other) const override;
-			bool rayCollision(ColliderObject* other) const override;
 			
 
         private:

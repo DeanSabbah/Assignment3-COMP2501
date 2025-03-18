@@ -4,17 +4,18 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <SOIL/SOIL.h>
 #include <iostream>
+#include <time.h>
 
 #include <path_config.h>
 
 #include "sprite.h"
 #include "shader.h"
 #include "player_game_object.h"
+#include "player_object.h"
 #include "collectible_game_object.h"
 #include "enemy_game_object.h"
 #include "projectile_game_object.h"
 #include "game.h"
-#include <time.h>
 
 namespace game {
 
@@ -69,7 +70,9 @@ void Game::SetupGameWorld(void)
 
     // Setup the player object (position, texture, vertex count)
     // Note that, in this specific implementation, the player object should always be the first object in the game object vector 
-    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship], glm::vec2(1.0f, 1.0f), 0.8f));
+    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[tex_red_ship], glm::vec2(1.0f, 1.0f)));
+	game_objects_[0]->AddComponent<ColliderObject>(0.8f);
+	game_objects_[0]->AddComponent<PlayerObject>();
     float pi_over_two = glm::pi<float>() / 2.0f;
     game_objects_[0]->SetRotation(pi_over_two);
 
